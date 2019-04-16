@@ -49,10 +49,11 @@ void MainWindow::creerWidgetPlatsFiltres(){
     widgetPlatsFiltres_->setSortingEnabled(true);
 }
 
-//TODO// FAIT
+//TODO //fait
+
 void MainWindow::creerWidgetCommande() {
     widgetCommande_ = new QListWidget(this);
-    widgetCommande_->setSortingEnabled(true);
+    widgetPlatsFiltres_->setSortingEnabled(true);
 }
 
 void MainWindow::creerWidgetBoutonsAjouterRetirer() {
@@ -75,29 +76,53 @@ void MainWindow::creerWidgetCommander() {
 
 
 
-//TODO
+//TODO //fait
 void MainWindow::designLayout() {
+   //Layout du Widget type menu et l'option de plats bio ou veges
+    QVBoxLayout* boxCoinHautGauche = new QVBoxLayout;
+    boxCoinHautGauche->addWidget(widgetTypeMenu_);
+    boxCoinHautGauche->addWidget(widgetPlatsBios_);
+    boxCoinHautGauche->addWidget(widgetPlatsVeges_);
+
+    //Layout pour les deux bouton ajouter plat et retirer plat
+    QHBoxLayout* ajouterRetirerLayout = new QHBoxLayout;
+    ajouterRetirerLayout->addWidget(widgetAjouterPlat_);
+    ajouterRetirerLayout->addWidget(widgetRetirerPlat_);
+
+    //Layout avec la liste de plats filtres et les boutons ajouter et retirer plat
+    QVBoxLayout* boxCoinHautDroite = new QVBoxLayout;
+    boxCoinHautDroite->addWidget(widgetPlatsFiltres_);
+    boxCoinHautDroite->addLayout(ajouterRetirerLayout);
+
+    //layout de la setion haut du UI
+    QHBoxLayout* sectionHautUi = new QHBoxLayout;
+    sectionHautUi->addLayout(boxCoinHautGauche);
+    sectionHautUi->addLayout(boxCoinHautDroite);
+
+    //Layout pour le text de prix et le bouton commander
+    QHBoxLayout* prixEtCommanderLayout = new QHBoxLayout;
+    prixEtCommanderLayout->addWidget(widgetPrix_);
+    prixEtCommanderLayout->addWidget(widgetCommander_);
+
+    //layout de la setion bas du UI
+    QVBoxLayout* sectionBasUI = new QVBoxLayout;
+    sectionBasUI->addWidget(widgetCommande_);
+    sectionBasUI->addLayout(prixEtCommanderLayout);
+
 
     QFrame* hLine = new QFrame();
     hLine->setFrameShape(QFrame::HLine);
 
+
     QVBoxLayout* mainBox = new QVBoxLayout(this);
-
+    mainBox->addLayout(sectionHautUi);
     mainBox->addWidget(hLine);
+    mainBox->addLayout(sectionBasUI);
 
+    QWidget* widget = new QWidget;
+    widget->setLayout(mainBox);
+    setCentralWidget(widget);
 
-    QWidget* mainWidget = new QWidget();
-    mainWidget->setLayout(mainBox);
-    setCentralWidget(mainWidget);
-
-
-    creerWidgets();
-
-    QVBoxLayout* boxCoinHautGauche = new QVBoxLayout(this);
-    boxCoinHautGauche->addWidget(widgetTypeMenu_);
-    boxCoinHautGauche->addWidget(widgetPlatsBios_);
-    boxCoinHautGauche->addWidget(widgetPlatsVeges_);
-    mainBox->addItem(boxCoinHautGauche);
 
 
 }
@@ -159,11 +184,16 @@ void MainWindow::insererPlatsChoisisDansCommande() {
     }
 }
 
-//TODO //AJOUTER TRY/CATCH
+//TODO//fait
 void MainWindow::retirerPlatsChoisisDeCommande() {
-    foreach (auto nomPlat, widgetPlatsFiltres_->selectedItems()) {
-            commande_->retirerPlat(nomPlat->text());
-    }
+    try{
+      foreach (auto nomPlat, widgetPlatsFiltres_->selectedItems()) {
+        commande_->retirerPlat(nomPlat->text());
+      }
+    }catch(ErreurPlatIntrouvable erreur){
+            message(erreur.what());
+        }
+
 }
 
 void MainWindow::mettreAJourPrix() {

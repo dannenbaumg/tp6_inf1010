@@ -19,7 +19,9 @@ void Commande::ajouterPlat(QString nomPlat) {
 void Commande::retirerPlat(QString nomPlat) {
     if(commande_.removeOne(nomPlat)){
         emit commandeModifie();
-    } //TODO
+    }else{
+        throw ErreurPlatIntrouvable(LABEL_MEAL_NOT_IN_MENU);
+    }
 }
 
 void Commande::viderCommande(){
